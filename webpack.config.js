@@ -1,8 +1,9 @@
 const path = require('path');
 
 var ExtractTextPlugin = require ('extract-text-webpack-plugin');
+var buildHash = process.env.NODE_ENV === "production" ? "[hash]" : "dev";
 
-module.exports = {
+const config = {
   context: path.join(__dirname, 'src'),
 
   entry: {
@@ -10,9 +11,9 @@ module.exports = {
   },
 
   output: {
-    path: path.join(__dirname, 'public'),
+    path: path.join(__dirname, 'public', buildHash),
     filename: "[name].js",
-    publicPath: "/public/"
+    publicPath: "/public/" + buildHash + "/"
   },
 
   watch: true,
@@ -21,21 +22,31 @@ module.exports = {
     aggregateTimeout: 100
   },
 
-  devtool: "source-map",
-
   module: {
-    loaders: [{
-      exclude: /node_modules/,
-      loader: 'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
-
-    },  {
-            test: /\.css$/,
-            loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-            
-        },
+    loaders: [
+      {
+        exclude: /node_modules/,
+        loader: 'babel?presets[]=react,presets[]=es2015,presets[]=stage-0'
+      },  
+      {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')      
+      },  
+      {
+        test: /\.sass$/,
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader!resolve-url!sass-loader?sourceMap')
+      },
     ]}, 
 
     plugins: [
-        new ExtractTextPlugin("style.css")
+      new ExtractTextPlugin("css/styles.css", {
+            allChunks: true
+      })
     ]
 }
+
+if (process.env.NODE_ENV == 'development') {
+  config.devtool = "source-map"
+}
+
+module.exports = config
