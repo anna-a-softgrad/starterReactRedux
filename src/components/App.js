@@ -1,17 +1,17 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 
-let App = (children) => {
-  console.log(activeItems)
+let App = ( {children} ) => {
 
   return (
   	<div>
 	  	<h1>App</h1>
-	    {children}
-	</div>
+	    {children}    	
+	</div>	
   )
 }
 
 App.propTypes = {
+	children: PropTypes.node.isRequired
 }
 
 export default App
